@@ -1,3 +1,4 @@
+---@class Player
 local Player = Object:extend()
 
 function Player:new(x, y)
@@ -6,8 +7,14 @@ function Player:new(x, y)
     self.speed = 175
     self.shootCooldown = 0
     self.maxShootCooldown = 0.1
-    self.bulletType = 'PlayerBulletDefault'
+    self.bulletType = "PlayerBulletDefault"
     self.bullets = {}
+    self.health = 3
+    self.maxHealth = 3 -- upgradable
+    self.invincibilityMaxTime = 0.75
+    self.invincibilityTime = 0
+    self.invincibilityBlinkTime = 0.1
+    self.invincible = false
 
     return self
 end
@@ -15,6 +22,23 @@ end
 function Player:convertMousePositionToAngle(mx, my)
     local angle = math.atan2(my - self.pos.y+25/2, mx - self.pos.x+25/2)
     return angle
+end
+
+function Player:bulletCheckScreenBounds(bullet)
+    if bullet.pos.x < 0 or bullet.pos.x > Inits.GameWidth or bullet.pos.y < 0 or bullet.pos.y > Inits.GameHeight then
+        return true
+    end
+    return false
+end
+
+function Player:bulletCheckCollision(bullet, enemy)
+    if bullet.pos.x < enemy.pos.x + enemy.size.x and
+        bullet.pos.x + 5 > enemy.pos.x and
+        bullet.pos.y < enemy.pos.y + enemy.size.y and
+        bullet.pos.y + 5 > enemy.pos.y then
+        return true
+    end
+    return false
 end
 
 function Player:update(dt)
@@ -46,6 +70,9 @@ function Player:update(dt)
 
     for i, bullet in ipairs(self.bullets) do
         bullet:update(dt)
+        if self:bulletCheckScreenBounds(bullet) then
+            table.remove(self.bullets, i)
+        end
     end
 end
 

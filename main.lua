@@ -36,9 +36,11 @@ function love.load()
     }
 
     BulletTypes = {
-        PlayerBulletDefault = require("Modules.Game.Bullets.PlayerBulletDefault")
+        PlayerBulletDefault = require("Modules.Game.Bullets.PlayerBulletDefault"),
+        TestEnemyBullet = require("Modules.Game.Bullets.TestEnemyBullet")
     }
     Player = require("Modules.Game.Player"):new()
+    TestEnemy = require("Modules.Game.Enemies.TestEnemy")
 
     State.switch(States.Testing.TestState)
 
